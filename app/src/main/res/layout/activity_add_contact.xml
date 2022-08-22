@@ -7,10 +7,11 @@
     tools:context=".ActivityAddContact">
 
     <ImageView
-        android:id="@+id/imageView"
+        android:id="@+id/img_Photo"
         android:layout_width="200dp"
         android:layout_height="200dp"
         android:layout_marginTop="10dp"
+        android:contentDescription="@string/phone"
         android:scaleType="fitCenter"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -18,61 +19,61 @@
         app:srcCompat="@drawable/person" />
 
     <EditText
-        android:id="@+id/editTextNama"
+        android:id="@+id/et_Name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
         android:layout_marginTop="35dp"
         android:layout_marginEnd="24dp"
         android:ems="10"
-        android:hint="Nama"
+        android:hint="@string/name"
         android:inputType="textPersonName"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView" />
+        app:layout_constraintTop_toBottomOf="@+id/img_Photo" />
 
     <EditText
-        android:id="@+id/editTextTelepon"
+        android:id="@+id/et_Phone"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
         android:layout_marginEnd="24dp"
         android:ems="10"
-        android:hint="Nomer HP"
+        android:hint="@string/phone"
         android:inputType="number"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextNama" />
+        app:layout_constraintTop_toBottomOf="@+id/et_Name" />
 
     <EditText
-        android:id="@+id/editTextSosmed"
+        android:id="@+id/et_socialMedia"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
         android:layout_marginEnd="24dp"
         android:ems="10"
-        android:hint="Instagram / LinkedIn"
+        android:hint="@string/social_media"
         android:inputType="textPersonName"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextTelepon" />
+        app:layout_constraintTop_toBottomOf="@+id/et_Phone" />
 
     <EditText
-        android:id="@+id/editTextAlamat"
+        android:id="@+id/et_Address"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
         android:layout_marginEnd="24dp"
         android:ems="10"
         android:gravity="start|top"
-        android:hint="Alamat / Kota"
+        android:hint="@string/address"
         android:inputType="textMultiLine"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextSosmed" />
+        app:layout_constraintTop_toBottomOf="@+id/et_socialMedia" />
 
     <Button
-        android:id="@+id/buttonUpdate"
+        android:id="@+id/btn_Add"
         style="@style/Widget.AppCompat.Button.Borderless"
         android:layout_width="100dp"
         android:layout_height="100dp"
@@ -81,10 +82,10 @@
         android:background="?android:attr/windowBackground"
         android:drawableTop="@drawable/icon_save"
         android:paddingTop="5dp"
-        android:text="Simpan"
+        android:text="@string/save"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextAlamat" />
+        app:layout_constraintTop_toBottomOf="@+id/et_Address" />
 
     <Button
         android:id="@+id/buttonBack"
@@ -96,10 +97,10 @@
         android:background="?android:attr/windowBackground"
         android:drawableTop="@drawable/icon_cancel"
         android:paddingTop="5dp"
-        android:text="Kembali"
+        android:text="@string/back"
         android:textSize="18sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextAlamat" />
+        app:layout_constraintTop_toBottomOf="@+id/et_Address" />
 
     <ProgressBar
         android:id="@+id/progressBar"
