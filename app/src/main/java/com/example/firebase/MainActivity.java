@@ -1,63 +1,60 @@
 package com.example.firebase;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.firebase.databinding.ActivityMainBinding;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.squareup.picasso.Picasso;
+
+import java.util.Objects;
+
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MainActivity extends AppCompatActivity {
 
+    private ActivityMainBinding binding;
     private FirebaseFirestore firebaseFirestore;
     private FirestoreRecyclerAdapter adapter;
-
-    LinearLayoutManager linearLayoutManager;
-    RecyclerView recyclerView;
-    ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
-        getSupportActionBar().setHomeAsUpIndicator(R.drawable.icon_contact);
+        Objects.requireNonNull(getSupportActionBar()).setHomeAsUpIndicator(R.drawable.icon_contact);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-        recyclerView = findViewById(R.id.recyclerView);
-        progressBar = findViewById(R.id.progressBar);
 
         firebaseFirestore = FirebaseFirestore.getInstance();
 
-        linearLayoutManager = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.VERTICAL, false);
-        recyclerView.setLayoutManager(linearLayoutManager);
+        binding.recyclerView.setHasFixedSize(true);
+        LinearLayoutManager lm = new WrapContentLinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        binding.recyclerView.addItemDecoration(new DividerItemDecoration(
+                binding.recyclerView.getContext(),
+                lm.getOrientation()));
+        binding.recyclerView.setLayoutManager(lm);
+
+        binding.floatingActionButton.setOnClickListener(view -> startActivity(new Intent(MainActivity.this, ActivityAddContact.class)));
 
         getData();
-
-        FloatingActionButton fab = findViewById(R.id.floatingActionButton);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(MainActivity.this, ActivityAddContact.class));
-            }
-        });
     }
 
     private void getData() {
@@ -71,55 +68,64 @@ public class MainActivity extends AppCompatActivity {
             @NonNull
             @Override
             public ContactsHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-                View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.activity_class_contact, parent, false);
+                View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_row_contact, parent, false);
                 return new ContactsHolder(view);
             }
 
             @Override
             protected void onBindViewHolder(@NonNull ContactsHolder holder, int position, @NonNull final ClassContact model) {
-                progressBar.setVisibility(View.GONE);
-                if( model.getFoto() != null) {
-                    Picasso.get().load(model.getFoto()).fit().into(holder.fotoContact);
-                }else{
-                    Picasso.get().load(R.drawable.icon_contact).fit().into(holder.fotoContact);
+                binding.progressBar.setVisibility(View.GONE);
+                if (model.getFoto() != null) {
+                    Picasso.get().load(model.getFoto()).fit().into(holder.photoContact);
+                } else {
+                    Picasso.get().load(R.drawable.icon_contact).fit().into(holder.photoContact);
                 }
-                holder.namaContact.setText(model.getNama());
-                holder.teleponContact.setText(model.getTelepon());
+                holder.nameContact.setText(model.getNama());
+                holder.phoneContact.setText(model.getTelepon());
 
-                holder.itemView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Intent intent = new Intent(MainActivity.this, ActivityDetailContact.class);
-                        intent.putExtra("telepon", model.getTelepon());
-                        startActivity(intent);
-
-                        //Snackbar.make(recyclerView, model.getNama()+", " +model.getTelepon(), Snackbar.LENGTH_LONG).setAction("Action", null).show();
-                    }
+                holder.itemView.setOnClickListener(v -> {
+                    Intent intent = new Intent(MainActivity.this, ActivityDetailContact.class);
+                    intent.putExtra("telepon", model.getTelepon());
+                    startActivity(intent);
                 });
             }
 
             @Override
             public void onError(@NonNull FirebaseFirestoreException e) {
-                Log.e("Ditemukan Error: ", e.getMessage());
+                Log.e("Error Found: ", e.getMessage());
             }
         };
         adapter.notifyDataSetChanged();
-        recyclerView.setAdapter(adapter);
+        binding.recyclerView.setAdapter(adapter);
     }
 
-    public class ContactsHolder extends RecyclerView.ViewHolder{
-
-        CircleImageView fotoContact;
-        TextView namaContact;
-        TextView teleponContact;
+    public static class ContactsHolder extends RecyclerView.ViewHolder {
+        CircleImageView photoContact;
+        TextView nameContact;
+        TextView phoneContact;
         ConstraintLayout constraintLayout;
 
         public ContactsHolder(@NonNull View itemView) {
             super(itemView);
-            fotoContact = itemView.findViewById(R.id.imageViewFoto);
-            namaContact = itemView.findViewById(R.id.textViewNama);
-            teleponContact = itemView.findViewById(R.id.textViewTelepon);
+            photoContact = itemView.findViewById(R.id.image_Photo);
+            nameContact = itemView.findViewById(R.id.tv_Name);
+            phoneContact = itemView.findViewById(R.id.tv_Phone);
             constraintLayout = itemView.findViewById(R.id.constraintLayout);
+        }
+    }
+
+    public static class WrapContentLinearLayoutManager extends LinearLayoutManager {
+        public WrapContentLinearLayoutManager(Context context, int orientation, boolean reverseLayout) {
+            super(context, orientation, reverseLayout);
+        }
+
+        @Override
+        public void onLayoutChildren(RecyclerView.Recycler recycler, RecyclerView.State state) {
+            try {
+                super.onLayoutChildren(recycler, state);
+            } catch (IndexOutOfBoundsException e) {
+                Log.e("TAG", "meet a I.O.O.B.E in RecyclerView");
+            }
         }
     }
 
